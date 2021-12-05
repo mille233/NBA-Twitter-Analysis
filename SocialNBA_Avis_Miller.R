@@ -8,12 +8,12 @@ library(shinythemes)
 library(dplyr)
 library(plotly)
 library(ggwordcloud)
-setwd("~/Avis_Miller_Project/ShinyAppProject/data")
+#setwd("~/Avis_Miller_Project/ShinyAppProject/data")
 #load data
 
-team <- read.csv('teamsfinal.csv')
-position <- read.csv('positiontab.csv')
-player <- read.csv('playertab.csv')
+team <- read.csv("data/teamsfinal.csv")
+position <- read.csv("data/positiontab.csv")
+player <- read.csv("data/playertab.csv")
 
 
 
