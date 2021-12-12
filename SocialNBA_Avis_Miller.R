@@ -17,6 +17,9 @@ player <- read.csv("data/playertab.csv")
 
 
 
+position$value <- ifelse(position$stat == "Average Salary", position$value*10, position$value)
+position$stat <- ifelse(position$stat == "Average Salary", "Average Salary (Hundred Thousands)", position$stat)
+
 ####################
 ################
 
@@ -37,11 +40,13 @@ ui <- fluidPage(
 
                                        h6('Search and Compare by Player:'),
 
+                                       actionButton('playerbutton', label = 'Search'),
+
                                        selectInput('chooseplayer', label='Player',
                                                    choices=c(player$player),
                                                    multiple=TRUE),
 
-                                       actionButton('playerbutton', label = 'Run'),
+
                          ),
 
                          mainPanel(#output will be player stats vs league (can do a stacked bar chart. Surplus will be green
@@ -77,7 +82,12 @@ ui <- fluidPage(
                          sidebarPanel(h6('Select Which Positions to Compare'),
                                       selectInput('chooseposition', label='Position',
                                                   choices=c('PG', 'SG', 'SF', 'PF', 'C'),
-                                                  multiple=TRUE)),
+                                                  multiple=TRUE),
+                                      h6('PG = Point Guard'),
+                                      h6('SG = Shooting Guard'),
+                                      h6('SF = Small Forward'),
+                                      h6('PF = Power Forward'),
+                                      h6('C = Center')),
 
                          mainPanel(
                            h3('Differences in Salary and Twitter Activity by Position'),
@@ -121,7 +131,7 @@ server <- function(input, output) {
   output$playerstats <-renderPlotly({
     playerstats <- ggplot(playerbutton(), aes(x=player, y=value, fill=variable)) +
       geom_bar(position='dodge', stat='identity') + xlab("Player") + ylab("Value") +
-      theme_classic() + labs(fill='Statistic') + scale_fill_manual(values = c("blue", "orange", "magenta", "yellow"), labels = c("Twitter Favorite Count","Twitter Retweet Count", "Salary (Ten Thousands)"))
+      theme_classic() + labs(fill='Statistic') + scale_fill_manual(values = c("red", "blue", "green"), labels = c("Twitter Favorite Count","Twitter Retweet Count", "Salary (Ten Thousands)"))
 
     ggplotly(playerstats)
   })
@@ -144,7 +154,7 @@ server <- function(input, output) {
 
   output$positionstats <-renderPlotly({
 
-    positionstats <- ggplot(position_subset(), aes(x=positioncol, y=value, fill=stat)) +
+    positionstats <- ggplot(position_subset(), aes(x=positioncol, y=round(value, 2), fill=stat)) +
       geom_bar(position='dodge', stat='identity') + xlab("Position") + ylab("Value") +
       theme_classic() + labs(fill='Statistic')
 
